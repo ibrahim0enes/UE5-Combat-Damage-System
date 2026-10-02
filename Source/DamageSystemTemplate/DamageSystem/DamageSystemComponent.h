@@ -4,8 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "DamageSystemTypes.h"
 #include "DamageSystemComponent.generated.h"
 
+
+struct FDamageInfo;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class DAMAGESYSTEMTEMPLATE_API UDamageSystemComponent : public UActorComponent
@@ -41,6 +44,12 @@ protected:
 	
 public:
 	
+	UFUNCTION(BlueprintCallable, Category = "Damage")
+	bool HandleIncomingDamage(FDamageInfo& DamageInfo);
+	
+	UFUNCTION(BlueprintCallable, Category = "Damage")
+	void HealIncomingHealer(float HealAmount, AActor* Healer);
+	
 	// GETTER FUNCTIONS //
 	UFUNCTION(BlueprintCallable, BlueprintPure , Category = "Health")
 	float GetCurrentHealth() { return CurrentHealth; }
@@ -58,7 +67,6 @@ public:
 	bool GetIsBlocking() { return IsBlocking; }
 	
 	// SETTER FUNCTIONS //
-	
 	UFUNCTION(BlueprintCallable, BlueprintPure , Category = "States")
 	void SetIsInvincible(bool NewInvincible) {IsInvincible = NewInvincible; }
 	
