@@ -67,9 +67,9 @@ public:
 	bool GetIsBlocking() { return IsBlocking; }
 	
 	// SETTER FUNCTIONS //
-	UFUNCTION(BlueprintCallable, BlueprintPure , Category = "States")
+	UFUNCTION(BlueprintCallable, Category = "States")
 	void SetIsInvincible(bool NewInvincible) {IsInvincible = NewInvincible; }
 	
-	UFUNCTION(BlueprintCallable, BlueprintPure , Category = "States")
+	UFUNCTION(BlueprintCallable, Category = "States")
 	void SetIsBlocking(bool NewBlocking) {IsBlocking = NewBlocking; }
 };
