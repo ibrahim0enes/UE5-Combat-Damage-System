@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "DamageSystemTypes.h"
 #include "DamageableInterfaces.generated.h"
 
 // This class does not need to be modified.
@@ -22,4 +23,17 @@ class DAMAGESYSTEMTEMPLATE_API IDamageableInterfaces
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	UFUNCTION(Blueprintable, BlueprintNativeEvent, Category = "Damageable Interfaces")
+	float GetCurrentHealth();
+	
+	UFUNCTION(Blueprintable, BlueprintNativeEvent, Category = "Damageable Interfaces")
+	float GetMaxHealth();
+	
+	UFUNCTION(Blueprintable, BlueprintNativeEvent, Category = "Damageable Interfaces")
+	bool GetIsDead();
+	
+	UFUNCTION(Blueprintable, BlueprintNativeEvent, Category = "Damageable Interfaces")
+	void Healt(float HealAmount, AActor* Healer);
+	
+	bool TakeDamage(FDamageInfo DamageInfo);
 };
