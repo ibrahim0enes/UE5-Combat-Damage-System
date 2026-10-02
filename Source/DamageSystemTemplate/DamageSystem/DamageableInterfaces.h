@@ -7,15 +7,17 @@
 #include "DamageSystemTypes.h"
 #include "DamageableInterfaces.generated.h"
 
+class AActor;
+
 // This class does not need to be modified.
-UINTERFACE()
+UINTERFACE(MinimalAPI, Blueprintable)
 class UDamageableInterfaces : public UInterface
 {
 	GENERATED_BODY()
 };
 
 /**
- * 
+ * Damageable interface: health, healing and damage handling.
  */
 class DAMAGESYSTEMTEMPLATE_API IDamageableInterfaces
 {
@@ -23,18 +25,18 @@ class DAMAGESYSTEMTEMPLATE_API IDamageableInterfaces
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	UFUNCTION(Blueprintable, BlueprintNativeEvent, Category = "Damageable Interfaces")
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Damageable Interfaces")
 	float GetCurrentHealth();
-	
-	UFUNCTION(Blueprintable, BlueprintNativeEvent, Category = "Damageable Interfaces")
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Damageable Interfaces")
 	float GetMaxHealth();
-	
-	UFUNCTION(Blueprintable, BlueprintNativeEvent, Category = "Damageable Interfaces")
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Damageable Interfaces")
 	bool GetIsDead();
-	
-	UFUNCTION(Blueprintable, BlueprintNativeEvent, Category = "Damageable Interfaces")
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Damageable Interfaces")
 	void Heal(float HealAmount, AActor* Healer);
 
-	UFUNCTION(Blueprintable, BlueprintNativeEvent, Category = "Damageable Interfaces")
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Damageable Interfaces")
 	bool TakeDamage(const FDamageInfo& DamageInfo);
 };
