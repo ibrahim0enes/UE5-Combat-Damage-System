@@ -24,13 +24,28 @@ void UDamageSystemComponent::BeginPlay()
 	
 }
 
-
-// Called every frame
-void UDamageSystemComponent::TickComponent(float DeltaTime, ELevelTick TickType,
-                                           FActorComponentTickFunction* ThisTickFunction)
+bool UDamageSystemComponent::HandleIncomingDamage(FDamageInfo& DamageInfo)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (IsDead) { return false; }
+	
+	if (IsInvincible && !DamageInfo.ShouldDamageInvincible)
+	{
+		return false;
+	}
+	
+	if (IsBlocking && DamageInfo.CanBeBlock)
+	{
+		return false;
+	}
+	
+}
 
-	// ...
+void UDamageSystemComponent::HealIncomingHealer(float HealAmount, AActor* Healer)
+{
+	if (IsDead) { return; }
+	
+	CurrentHealth = FMath::Clamp(CurrentHealth + HealAmount, 0.f, MaxHealth);
+	
+	
 }
 
