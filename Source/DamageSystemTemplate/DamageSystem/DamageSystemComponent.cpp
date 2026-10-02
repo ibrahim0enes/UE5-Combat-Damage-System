@@ -28,17 +28,13 @@ bool UDamageSystemComponent::HandleIncomingDamage(FDamageInfo& DamageInfo)
 {
 	if (IsDead) { return false; }
 	
-	if (IsInvincible && !DamageInfo.ShouldDamageInvincible)
-	{
-		return false;
-	}
-	
-	if (IsBlocking && DamageInfo.CanBeBlock)
+	if ((IsInvincible && !DamageInfo.ShouldDamageInvincible) || (IsBlocking && DamageInfo.CanBeBlock))
 	{
 		return false;
 	}
 	
 	CurrentHealth = FMath::Clamp(CurrentHealth - DamageInfo.DamageAmount, 0.f, MaxHealth);
+	return true;
 }
 
 void UDamageSystemComponent::HealIncomingHealer(float HealAmount, AActor* Healer)
