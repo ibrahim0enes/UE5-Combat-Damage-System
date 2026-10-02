@@ -24,7 +24,7 @@ void UDamageSystemComponent::BeginPlay()
 	
 }
 
-bool UDamageSystemComponent::HandleIncomingDamage(FDamageInfo& DamageInfo)
+bool UDamageSystemComponent::HandleIncomingDamage(const FDamageInfo& DamageInfo)
 {
 	if (IsDead) { return false; }
 	

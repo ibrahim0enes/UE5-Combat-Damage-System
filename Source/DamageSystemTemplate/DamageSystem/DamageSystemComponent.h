@@ -45,7 +45,7 @@ protected:
 public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Damage")
-	bool HandleIncomingDamage(FDamageInfo& DamageInfo);
+	bool HandleIncomingDamage(const FDamageInfo& DamageInfo);
 	
 	UFUNCTION(BlueprintCallable, Category = "Damage")
 	void HealIncomingHealer(float HealAmount, AActor* Healer);
