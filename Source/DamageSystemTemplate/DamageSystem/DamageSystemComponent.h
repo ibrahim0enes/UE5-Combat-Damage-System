@@ -41,6 +41,7 @@ protected:
 	
 public:
 	
+	// GETTER FUNCTIONS //
 	UFUNCTION(BlueprintCallable, BlueprintPure , Category = "Health")
 	float GetCurrentHealth() { return CurrentHealth; }
 	
@@ -55,4 +56,12 @@ public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure , Category = "States")
 	bool GetIsBlocking() { return IsBlocking; }
+	
+	// SETTER FUNCTIONS //
+	
+	UFUNCTION(BlueprintCallable, BlueprintPure , Category = "States")
+	void SetIsInvincible(bool NewInvincible) {IsInvincible = NewInvincible; }
+	
+	UFUNCTION(BlueprintCallable, BlueprintPure , Category = "States")
+	void SetIsBlocking(bool NewBlocking) {IsBlocking = NewBlocking; }
 };
