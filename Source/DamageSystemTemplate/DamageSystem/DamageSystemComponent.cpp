@@ -38,6 +38,7 @@ bool UDamageSystemComponent::HandleIncomingDamage(FDamageInfo& DamageInfo)
 		return false;
 	}
 	
+	CurrentHealth = FMath::Clamp(CurrentHealth - DamageInfo.DamageAmount, 0.f, MaxHealth);
 }
 
 void UDamageSystemComponent::HealIncomingHealer(float HealAmount, AActor* Healer)
