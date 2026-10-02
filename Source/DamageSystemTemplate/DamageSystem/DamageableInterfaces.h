@@ -34,6 +34,7 @@ public:
 	
 	UFUNCTION(Blueprintable, BlueprintNativeEvent, Category = "Damageable Interfaces")
 	void Healt(float HealAmount, AActor* Healer);
-	
+
+	UFUNCTION(Blueprintable, BlueprintNativeEvent, Category = "Damageable Interfaces")
 	bool TakeDamage(FDamageInfo DamageInfo);
 };
