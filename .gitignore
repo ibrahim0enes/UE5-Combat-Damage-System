@@ -1,0 +1,83 @@
+# =========================================================
+# Unreal Engine generated folders
+# =========================================================
+
+Binaries/
+Build/
+DerivedDataCache/
+Intermediate/
+Saved/
+Config/DefaultEditorPerProjectUserSettings.ini
+
+# =========================================================
+# Unreal generated project files
+# =========================================================
+
+*.sln
+*.slnx
+*.sln.docstates
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.xcodeproj
+*.xcworkspace
+
+# =========================================================
+# Visual Studio / Rider / VS Code
+# =========================================================
+
+.vs/
+.idea/
+.vscode/
+.vsconfig
+
+*.suo
+*.user
+*.userprefs
+*.VC.db
+*.VC.opendb
+*.opendb
+
+# =========================================================
+# Build output
+# =========================================================
+
+*.pdb
+*.obj
+*.dll
+*.lib
+*.exp
+*.exe
+*.app
+*.ipa
+*.dSYM/
+
+Packaged/
+Releases/
+
+# =========================================================
+# Logs and temporary files
+# =========================================================
+
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+
+# =========================================================
+# Operating system files
+# =========================================================
+
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# =========================================================
+# Environment and secret files
+# =========================================================
+
+.env
+.env.*
+!.env.example
