@@ -33,7 +33,7 @@ public:
 	bool GetIsDead();
 	
 	UFUNCTION(Blueprintable, BlueprintNativeEvent, Category = "Damageable Interfaces")
-	void Healt(float HealAmount, AActor* Healer);
+	void Heal(float HealAmount, AActor* Healer);
 
 	UFUNCTION(Blueprintable, BlueprintNativeEvent, Category = "Damageable Interfaces")
 	bool TakeDamage(const FDamageInfo& DamageInfo);

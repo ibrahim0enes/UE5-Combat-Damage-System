@@ -48,7 +48,7 @@ public:
 	bool HandleIncomingDamage(const FDamageInfo& DamageInfo);
 	
 	UFUNCTION(BlueprintCallable, Category = "Damage")
-	void HealIncomingHealer(float HealAmount, AActor* Healer);
+	void HandleIncomingHeal(float HealAmount, AActor* Healer);
 	
 	// GETTER FUNCTIONS //
 	UFUNCTION(BlueprintCallable, BlueprintPure , Category = "Health")

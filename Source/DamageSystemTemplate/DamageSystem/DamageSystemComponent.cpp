@@ -37,7 +37,7 @@ bool UDamageSystemComponent::HandleIncomingDamage(const FDamageInfo& DamageInfo)
 	return true;
 }
 
-void UDamageSystemComponent::HealIncomingHealer(float HealAmount, AActor* Healer)
+void UDamageSystemComponent::HandleIncomingHeal(float HealAmount, AActor* Healer)
 {
 	if (IsDead) { return; }
 	
