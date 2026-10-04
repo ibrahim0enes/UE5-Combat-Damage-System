@@ -4,6 +4,9 @@
 #include "DamageableCharacterBase.h"
 #include "DamageSystemComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Animation/AnimInstance.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "TimerManager.h"
 
 
 // Sets default values
@@ -33,6 +36,74 @@ void ADamageableCharacterBase::BeginPlay()
 
 void ADamageableCharacterBase::RespondToDamageTaken_Implementation(const FDamageInfo& DamageInfo)
 {
+	switch (DamageInfo.DamageResponse)
+	{
+	case EDamageResponse::HitReaction:
+		PlayResponseMontage(HitReactionMontage, DamageInfo.ShouldForceInterrupt);
+		break;
+	case EDamageResponse::Knockback:
+		ApplyKnockback(DamageInfo);
+		break;
+	case EDamageResponse::Stagger:
+		// A stagger always breaks whatever the character is doing.
+		PlayResponseMontage(StaggerMontage, true);
+		break;
+	case EDamageResponse::Stun:
+		ApplyStun(DamageInfo.StunDuration);
+		break;
+	default:
+		break;
+	}
+}
+
+void ADamageableCharacterBase::PlayResponseMontage(UAnimMontage* Montage, bool bForceInterrupt)
+{
+	if (!Montage || !GetMesh()) return;
+	
+	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+	{
+		// Without ShouldForceInterrupt, an action that is already playing (e.g. an attack) is not interrupted.
+		if (!bForceInterrupt && AnimInstance->IsAnyMontagePlaying()) return;
+		
+		AnimInstance->Montage_Play(Montage);
+	}
+}
+
+void ADamageableCharacterBase::ApplyKnockback(const FDamageInfo& DamageInfo)
+{
+	if (DamageInfo.KnockbackStrength <= 0.0f) return;
+	
+	// Push away from the attacker; without a causer, fall back to pushing backwards.
+	FVector Direction = -GetActorForwardVector();
+	if (DamageInfo.DamageCauser)
+	{
+		Direction = GetActorLocation() - DamageInfo.DamageCauser->GetActorLocation();
+	}
+	Direction.Z = 0.0f;
+	if (!Direction.Normalize()) return;
+	
+	const FVector LaunchVelocity = Direction * DamageInfo.KnockbackStrength + FVector(0.0f, 0.0f, DamageInfo.KnockbackStrength * 0.25f);
+	LaunchCharacter(LaunchVelocity, true, true);
+}
+
+void ADamageableCharacterBase::ApplyStun(float Duration)
+{
+	UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
+	if (!MovementComponent || Duration <= 0.0f) return;
+	
+	MovementComponent->DisableMovement();
+	GetWorldTimerManager().SetTimer(StunTimerHandle, FTimerDelegate::CreateUObject(this, &ADamageableCharacterBase::EndStun), Duration, false);
+}
+
+void ADamageableCharacterBase::EndStun()
+{
+	// A character that died while stunned must stay immobile.
+	if (DamageSystemComponent && DamageSystemComponent->GetIsDead()) return;
+	
+	if (UCharacterMovementComponent* MovementComponent = GetCharacterMovement())
+	{
+		MovementComponent->SetMovementMode(MOVE_Walking);
+	}
 }
 
 void ADamageableCharacterBase::RespondTDamageAvoided_Implementation(const FDamageInfo& DamageInfo)

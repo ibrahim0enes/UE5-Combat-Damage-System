@@ -8,6 +8,7 @@
 #include "DamageableCharacterBase.generated.h"
 
 class UDamageSystemComponent;
+class UAnimMontage;
 
 UCLASS()
 class DAMAGESYSTEMTEMPLATE_API ADamageableCharacterBase : public ACharacter, public IDamageableInterfaces
@@ -34,6 +35,13 @@ protected:
 	UFUNCTION(BlueprintNativeEvent)
 	void RespondToDeath();
 
+	// Optional montages played for the matching EDamageResponse.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage Response")
+	TObjectPtr<UAnimMontage> HitReactionMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage Response")
+	TObjectPtr<UAnimMontage> StaggerMontage;
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -51,4 +59,12 @@ public:
 	// Damage System Component
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UDamageSystemComponent> DamageSystemComponent;
+
+private:
+	FTimerHandle StunTimerHandle;
+
+	void PlayResponseMontage(UAnimMontage* Montage, bool bForceInterrupt);
+	void ApplyKnockback(const FDamageInfo& DamageInfo);
+	void ApplyStun(float Duration);
+	void EndStun();
 };

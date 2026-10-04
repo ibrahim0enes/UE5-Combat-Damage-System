@@ -52,4 +52,12 @@ struct FDamageInfo
     
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
 	EDamageResponse DamageResponse = EDamageResponse::None;
+
+	// Launch speed used when DamageResponse is Knockback (pushes away from DamageCauser).
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	float KnockbackStrength = 600.0f;
+
+	// Seconds the target cannot move when DamageResponse is Stun.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	float StunDuration = 1.0f;
 };
