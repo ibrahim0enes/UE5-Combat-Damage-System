@@ -83,16 +83,16 @@ public:
 	
 	// DELEGATES // 
 	UPROPERTY(BlueprintAssignable, Category = "Damage Delegates")
-	FOnDamageTaken OndDamageTaken;
+	FOnDamageTaken OnDamageTaken;
 	
 	UPROPERTY(BlueprintAssignable, Category = "Damage Delegates")
-	FOnDamageAvoided OndDamageAvoided;
+	FOnDamageAvoided OnDamageAvoided;
 	
 	UPROPERTY(BlueprintAssignable, Category = "Damage Delegates")
-	FOnDeath OndDeath;
+	FOnDeath OnDeath;
 	
 	UPROPERTY(BlueprintAssignable, Category = "Damage Delegates")
-	FOnHealReceived OndHealReceived;
+	FOnHealReceived OnHealReceived;
 	
 	
 };

@@ -28,10 +28,10 @@ void ADamageableCharacterBase::BeginPlay()
 	
 	if (DamageSystemComponent)
 	{
-		DamageSystemComponent->OndDamageTaken.AddDynamic(this, &ADamageableCharacterBase::RespondToDamageTaken);
-		DamageSystemComponent->OndDamageAvoided.AddDynamic(this, &ADamageableCharacterBase::RespondTDamageAvoided);
-		DamageSystemComponent->OndHealReceived.AddDynamic(this, &ADamageableCharacterBase::RespondToHealRecieved);
-		DamageSystemComponent->OndDeath.AddDynamic(this, &ADamageableCharacterBase::RespondToDeath);
+		DamageSystemComponent->OnDamageTaken.AddDynamic(this, &ADamageableCharacterBase::RespondToDamageTaken);
+		DamageSystemComponent->OnDamageAvoided.AddDynamic(this, &ADamageableCharacterBase::RespondToDamageAvoided);
+		DamageSystemComponent->OnHealReceived.AddDynamic(this, &ADamageableCharacterBase::RespondToHealReceived);
+		DamageSystemComponent->OnDeath.AddDynamic(this, &ADamageableCharacterBase::RespondToDeath);
 	}
 }
 
@@ -39,11 +39,11 @@ void ADamageableCharacterBase::RespondToDamageTaken_Implementation(const FDamage
 {
 }
 
-void ADamageableCharacterBase::RespondTDamageAvoided_Implementation(const FDamageInfo& DamageInfo)
+void ADamageableCharacterBase::RespondToDamageAvoided_Implementation(const FDamageInfo& DamageInfo)
 {
 }
 
-void ADamageableCharacterBase::RespondToHealRecieved_Implementation(float HealAmount, AActor* Healer)
+void ADamageableCharacterBase::RespondToHealReceived_Implementation(float HealAmount, AActor* Healer)
 {
 }
 

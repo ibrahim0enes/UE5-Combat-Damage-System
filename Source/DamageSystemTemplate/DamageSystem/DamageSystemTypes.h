@@ -36,7 +36,7 @@ struct FDamageInfo
 	AActor* DamageCauser = nullptr;
     
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
-	bool CanBeBlock = true;
+	bool CanBeBlocked = true;
     
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
 	bool CanBeParried = false;
