@@ -71,13 +71,14 @@ protected:
 	UFUNCTION()
 	void OnRep_IsDead();
 	
-	// Cosmetic events are broadcast on remote clients through these (the server broadcasts locally).
+	// Clients ask the server to change their blocking/parrying state (the server decides damage).
 	UFUNCTION(Server, Reliable)
 	void ServerSetIsBlocking(bool NewBlocking);
 	
 	UFUNCTION(Server, Reliable)
 	void ServerSetIsParrying(bool NewParrying);
 	
+	// Cosmetic events are broadcast on remote clients through these (the server broadcasts locally).
 	UFUNCTION(NetMulticast, Unreliable)
 	void MulticastDamageTaken(const FDamageInfo& DamageInfo);
 	
