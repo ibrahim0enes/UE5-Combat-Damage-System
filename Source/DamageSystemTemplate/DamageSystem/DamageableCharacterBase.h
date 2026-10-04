@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DamageableInterfaces.h"
 #include "GameFramework/Character.h"
 #include "DamageableCharacterBase.generated.h"
 
 UCLASS()
-class DAMAGESYSTEMTEMPLATE_API ADamageableCharacterBase : public ACharacter
+class DAMAGESYSTEMTEMPLATE_API ADamageableCharacterBase : public ACharacter, public IDamageableInterfaces
 {
 	GENERATED_BODY()
 
@@ -25,4 +26,10 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+	// Damageable Interface Implementations
+	virtual float GetMaxHealth_Implementation() override;
+	virtual float GetCurrentHealth_Implementation() override;
+	virtual bool GetIsDead_Implementation() override;
+	virtual  void Heal_Implementation(float HealAmount, AActor* Healer) override;
 };
