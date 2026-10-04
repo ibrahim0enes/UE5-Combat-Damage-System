@@ -34,14 +34,42 @@ bool UDamageSystemComponent::HandleIncomingDamage(const FDamageInfo& DamageInfo)
 		return false;
 	}
 	
-	CurrentHealth = FMath::Clamp(CurrentHealth - DamageInfo.DamageAmount, 0.f, MaxHealth);
-	OndDamageTaken.Broadcast(DamageInfo);
+	const float FinalDamage = CalculateFinalDamage(DamageInfo);
+	if (DamageInfo.DamageAmount > 0.0f && FinalDamage <= 0.0f)
+	{
+		// Fully absorbed by resistance/armor.
+		OndDamageAvoided.Broadcast(DamageInfo);
+		return false;
+	}
+	
+	CurrentHealth = FMath::Clamp(CurrentHealth - FinalDamage, 0.f, MaxHealth);
+	
+	// Listeners receive the damage that was actually applied.
+	FDamageInfo AppliedDamage = DamageInfo;
+	AppliedDamage.DamageAmount = FinalDamage;
+	OndDamageTaken.Broadcast(AppliedDamage);
 	if (CurrentHealth <= 0.0f)
 	{
 		IsDead = true;
 		OndDeath.Broadcast();
 	}
 	return true;
+}
+
+float UDamageSystemComponent::CalculateFinalDamage(const FDamageInfo& DamageInfo) const
+{
+	float Resistance = 0.0f;
+	if (const float* Found = Resistances.Find(DamageInfo.DamageType))
+	{
+		Resistance = FMath::Min(*Found, 1.0f);
+	}
+	
+	float Damage = DamageInfo.DamageAmount * (1.0f - Resistance);
+	if (DamageInfo.DamageType == EDamageType::Physical)
+	{
+		Damage -= Armor;
+	}
+	return FMath::Max(Damage, 0.0f);
 }
 
 void UDamageSystemComponent::HandleIncomingHeal(float HealAmount, AActor* Healer)

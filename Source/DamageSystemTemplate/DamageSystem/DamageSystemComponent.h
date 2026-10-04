@@ -25,6 +25,14 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MaxHealth = 100.0f;
+
+	// Flat damage reduction, applied to Physical damage after resistance.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Defense", meta = (ClampMin = "0.0"))
+	float Armor = 0.0f;
+
+	// Resistance per damage type. 0 = no resistance, 0.5 = takes half damage, 1 = immune, negative = weakness.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Defense")
+	TMap<EDamageType, float> Resistances;
 	
 private:
 	
@@ -53,6 +61,10 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Damage")
 	void HandleIncomingHeal(float HealAmount, AActor* Healer);
+
+	// Damage that would actually be applied after resistance and armor: max(0, Amount * (1 - Resistance) - Armor).
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Damage")
+	float CalculateFinalDamage(const FDamageInfo& DamageInfo) const;
 	
 	// GETTER FUNCTIONS //
 	UFUNCTION(BlueprintCallable, BlueprintPure , Category = "Health")
