@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "DamageableInterfaces.h"
+#include "Damageable.h"
 #include "GameFramework/Character.h"
 #include "DamageableCharacterBase.generated.h"
 
@@ -11,7 +11,7 @@ class UDamageSystemComponent;
 class UAnimMontage;
 
 UCLASS()
-class DAMAGESYSTEMTEMPLATE_API ADamageableCharacterBase : public ACharacter, public IDamageableInterfaces
+class DAMAGESYSTEMTEMPLATE_API ADamageableCharacterBase : public ACharacter, public IDamageable
 {
 	GENERATED_BODY()
 
