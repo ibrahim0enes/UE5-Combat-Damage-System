@@ -31,19 +31,19 @@ void ADamageableCharacterBase::BeginPlay()
 	}
 }
 
-void ADamageableCharacterBase::RespondToDamageTaken(const FDamageInfo& DamageInfo)
+void ADamageableCharacterBase::RespondToDamageTaken_Implementation(const FDamageInfo& DamageInfo)
 {
 }
 
-void ADamageableCharacterBase::RespondTDamageAvoided(const FDamageInfo& DamageInfo)
+void ADamageableCharacterBase::RespondTDamageAvoided_Implementation(const FDamageInfo& DamageInfo)
 {
 }
 
-void ADamageableCharacterBase::RespondToHealRecieved(float HealAmount, AActor* Healer)
+void ADamageableCharacterBase::RespondToHealRecieved_Implementation(float HealAmount, AActor* Healer)
 {
 }
 
-void ADamageableCharacterBase::RespondToDeath()
+void ADamageableCharacterBase::RespondToDeath_Implementation()
 {
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);

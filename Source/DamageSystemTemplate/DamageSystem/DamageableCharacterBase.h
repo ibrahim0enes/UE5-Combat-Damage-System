@@ -22,16 +22,16 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
-	UFUNCTION()
+	UFUNCTION(BlueprintNativeEvent)
 	void RespondToDamageTaken(const FDamageInfo& DamageInfo);
 	
-	UFUNCTION()
+	UFUNCTION(BlueprintNativeEvent)
 	void RespondTDamageAvoided(const FDamageInfo& DamageInfo);
 	
-	UFUNCTION()
+	UFUNCTION(BlueprintNativeEvent)
 	void RespondToHealRecieved(float HealAmount, AActor* Healer);
 	
-	UFUNCTION()
+	UFUNCTION(BlueprintNativeEvent)
 	void RespondToDeath();
 
 public:
