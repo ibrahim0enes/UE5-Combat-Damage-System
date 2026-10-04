@@ -64,3 +64,10 @@ void ADamageableCharacterBase::Heal_Implementation(float HealAmount, AActor* Hea
 	}
 	
 }
+
+bool ADamageableCharacterBase::TakeDamage_Implementation(const FDamageInfo& DamageInfo)
+{
+	if (!DamageSystemComponent) return false;
+	
+	return DamageSystemComponent->HandleIncomingDamage(DamageInfo);
+}

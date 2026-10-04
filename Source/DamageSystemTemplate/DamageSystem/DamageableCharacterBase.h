@@ -34,6 +34,7 @@ public:
 	virtual float GetCurrentHealth_Implementation() override;
 	virtual bool GetIsDead_Implementation() override;
 	virtual  void Heal_Implementation(float HealAmount, AActor* Healer) override;
+	virtual bool TakeDamage_Implementation(const FDamageInfo& DamageInfo) override;
 	
 	// Damage System Component
 	TObjectPtr<UDamageSystemComponent> DamageSystemComponent;
