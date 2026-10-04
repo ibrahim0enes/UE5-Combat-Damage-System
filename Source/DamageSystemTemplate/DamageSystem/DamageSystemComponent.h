@@ -7,7 +7,8 @@
 #include "DamageSystemTypes.h"
 #include "DamageSystemComponent.generated.h"
 
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDamageTaken, const FDamageInfo& , DamageInfo);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
 struct FDamageInfo;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -72,4 +73,11 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "States")
 	void SetIsBlocking(bool NewBlocking) {IsBlocking = NewBlocking; }
+	
+	// DELEGATES // 
+	UPROPERTY(BlueprintAssignable, Category = "Damage Delegates")
+	FOnDamageTaken OndDamageTaken;
+	
+	UPROPERTY(BlueprintAssignable, Category = "Damage Delegates")
+	FOnDeath OndDeath;
 };

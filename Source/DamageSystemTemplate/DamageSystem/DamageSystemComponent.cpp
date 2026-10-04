@@ -34,6 +34,12 @@ bool UDamageSystemComponent::HandleIncomingDamage(const FDamageInfo& DamageInfo)
 	}
 	
 	CurrentHealth = FMath::Clamp(CurrentHealth - DamageInfo.DamageAmount, 0.f, MaxHealth);
+	OndDamageTaken.Broadcast(DamageInfo);
+	if (CurrentHealth <= 0.0f)
+	{
+		IsDead = true;
+		OndDeath.Broadcast();
+	}
 	return true;
 }
 
