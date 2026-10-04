@@ -9,6 +9,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDamageTaken, const FDamageInfo& , DamageInfo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDamageAvoided, const FDamageInfo& , DamageInfo);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDamageParried, const FDamageInfo& , DamageInfo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealReceived, float, HealAmount, AActor*, Healer);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
 struct FDamageInfo;
@@ -33,6 +34,11 @@ public:
 	// Resistance per damage type. 0 = no resistance, 0.5 = takes half damage, 1 = immune, negative = weakness.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Defense")
 	TMap<EDamageType, float> Resistances;
+
+	// Blocking only works against attackers inside this cone in front of the owner (degrees from forward).
+	// 90 = the whole front half, 180 = every direction.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Defense", meta = (ClampMin = "0.0", ClampMax = "180.0"))
+	float BlockHalfAngle = 90.0f;
 	
 private:
 	
@@ -48,6 +54,12 @@ private:
 	
 	UPROPERTY()
 	bool IsInvincible = false;
+	
+	UPROPERTY()
+	bool IsParrying = false;
+	
+	// True if the attacker is inside the owner's block cone (or if the direction cannot be determined).
+	bool IsInBlockArc(const FDamageInfo& DamageInfo) const;
 
 protected:
 	// Called when the game starts
@@ -82,12 +94,19 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure , Category = "States")
 	bool GetIsBlocking() { return IsBlocking; }
 	
+	UFUNCTION(BlueprintCallable, BlueprintPure , Category = "States")
+	bool GetIsParrying() { return IsParrying; }
+	
 	// SETTER FUNCTIONS //
 	UFUNCTION(BlueprintCallable, Category = "States")
 	void SetIsInvincible(bool NewInvincible) {IsInvincible = NewInvincible; }
 	
 	UFUNCTION(BlueprintCallable, Category = "States")
 	void SetIsBlocking(bool NewBlocking) {IsBlocking = NewBlocking; }
+	
+	// Open the parry window (e.g. from an AnimNotifyState); attacks with CanBeParried are then negated.
+	UFUNCTION(BlueprintCallable, Category = "States")
+	void SetIsParrying(bool NewParrying) {IsParrying = NewParrying; }
 	
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	void SetStartingHealth(float StartingHealth);
@@ -99,6 +118,9 @@ public:
 	
 	UPROPERTY(BlueprintAssignable, Category = "Damage Delegates")
 	FOnDamageAvoided OndDamageAvoided;
+	
+	UPROPERTY(BlueprintAssignable, Category = "Damage Delegates")
+	FOnDamageParried OnDamageParried;
 	
 	UPROPERTY(BlueprintAssignable, Category = "Damage Delegates")
 	FOnDeath OndDeath;

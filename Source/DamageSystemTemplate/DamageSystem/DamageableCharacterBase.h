@@ -30,6 +30,9 @@ protected:
 	void RespondTDamageAvoided(const FDamageInfo& DamageInfo);
 	
 	UFUNCTION(BlueprintNativeEvent)
+	void RespondToDamageParried(const FDamageInfo& DamageInfo);
+	
+	UFUNCTION(BlueprintNativeEvent)
 	void RespondToHealRecieved(float HealAmount, AActor* Healer);
 	
 	UFUNCTION(BlueprintNativeEvent)

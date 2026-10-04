@@ -2,6 +2,7 @@
 
 
 #include "DamageSystemComponent.h"
+#include "GameFramework/Actor.h"
 
 
 // Sets default values for this component's properties
@@ -28,7 +29,20 @@ bool UDamageSystemComponent::HandleIncomingDamage(const FDamageInfo& DamageInfo)
 {
 	if (IsDead) { return false; }
 	
-	if ((IsInvincible && !DamageInfo.ShouldDamageInvincible) || (IsBlocking && DamageInfo.CanBeBlock))
+	if (IsInvincible && !DamageInfo.ShouldDamageInvincible)
+	{
+		OndDamageAvoided.Broadcast(DamageInfo);
+		return false;
+	}
+	
+	// A parry inside the parry window negates the hit entirely and lets the owner react (counter-attack, etc.).
+	if (IsParrying && DamageInfo.CanBeParried && IsInBlockArc(DamageInfo))
+	{
+		OnDamageParried.Broadcast(DamageInfo);
+		return false;
+	}
+	
+	if (IsBlocking && DamageInfo.CanBeBlock && IsInBlockArc(DamageInfo))
 	{
 		OndDamageAvoided.Broadcast(DamageInfo);
 		return false;
@@ -54,6 +68,21 @@ bool UDamageSystemComponent::HandleIncomingDamage(const FDamageInfo& DamageInfo)
 		OndDeath.Broadcast();
 	}
 	return true;
+}
+
+bool UDamageSystemComponent::IsInBlockArc(const FDamageInfo& DamageInfo) const
+{
+	const AActor* OwnerActor = GetOwner();
+	if (!OwnerActor || !DamageInfo.DamageCauser) return true;
+	
+	FVector ToCauser = DamageInfo.DamageCauser->GetActorLocation() - OwnerActor->GetActorLocation();
+	ToCauser.Z = 0.0f;
+	FVector Forward = OwnerActor->GetActorForwardVector();
+	Forward.Z = 0.0f;
+	if (!ToCauser.Normalize() || !Forward.Normalize()) return true;
+	
+	const float CosLimit = FMath::Cos(FMath::DegreesToRadians(FMath::Clamp(BlockHalfAngle, 0.0f, 180.0f)));
+	return FVector::DotProduct(Forward, ToCauser) >= CosLimit;
 }
 
 float UDamageSystemComponent::CalculateFinalDamage(const FDamageInfo& DamageInfo) const

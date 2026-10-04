@@ -29,6 +29,7 @@ void ADamageableCharacterBase::BeginPlay()
 	{
 		DamageSystemComponent->OndDamageTaken.AddDynamic(this, &ADamageableCharacterBase::RespondToDamageTaken);
 		DamageSystemComponent->OndDamageAvoided.AddDynamic(this, &ADamageableCharacterBase::RespondTDamageAvoided);
+		DamageSystemComponent->OnDamageParried.AddDynamic(this, &ADamageableCharacterBase::RespondToDamageParried);
 		DamageSystemComponent->OndHealReceived.AddDynamic(this, &ADamageableCharacterBase::RespondToHealRecieved);
 		DamageSystemComponent->OndDeath.AddDynamic(this, &ADamageableCharacterBase::RespondToDeath);
 	}
@@ -107,6 +108,10 @@ void ADamageableCharacterBase::EndStun()
 }
 
 void ADamageableCharacterBase::RespondTDamageAvoided_Implementation(const FDamageInfo& DamageInfo)
+{
+}
+
+void ADamageableCharacterBase::RespondToDamageParried_Implementation(const FDamageInfo& DamageInfo)
 {
 }
 
