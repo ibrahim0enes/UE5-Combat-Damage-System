@@ -28,8 +28,9 @@ public:
 	
 private:
 	
+	// Synced with MaxHealth in BeginPlay, so changing MaxHealth in Blueprint/editor still starts at full health
 	UPROPERTY()
-	float CurrentHealth = MaxHealth;
+	float CurrentHealth = 0.0f;
 	
 	UPROPERTY()
 	bool IsDead = false;
