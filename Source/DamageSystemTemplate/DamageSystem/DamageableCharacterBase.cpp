@@ -3,6 +3,7 @@
 
 #include "DamageableCharacterBase.h"
 #include "DamageSystemComponent.h"
+#include "Components/CapsuleComponent.h"
 
 
 // Sets default values
@@ -21,6 +22,32 @@ void ADamageableCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	if (DamageSystemComponent)
+	{
+		DamageSystemComponent->OndDamageTaken.AddDynamic(this, &ADamageableCharacterBase::RespondToDamageTaken);
+		DamageSystemComponent->OndDamageAvoided.AddDynamic(this, &ADamageableCharacterBase::RespondTDamageAvoided);
+		DamageSystemComponent->OndHealReceived.AddDynamic(this, &ADamageableCharacterBase::RespondToHealRecieved);
+		DamageSystemComponent->OndDeath.AddDynamic(this, &ADamageableCharacterBase::RespondToDeath);
+	}
+}
+
+void ADamageableCharacterBase::RespondToDamageTaken(const FDamageInfo& DamageInfo)
+{
+}
+
+void ADamageableCharacterBase::RespondTDamageAvoided(const FDamageInfo& DamageInfo)
+{
+}
+
+void ADamageableCharacterBase::RespondToHealRecieved(float HealAmount, AActor* Healer)
+{
+}
+
+void ADamageableCharacterBase::RespondToDeath()
+{
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetMesh()->SetSimulatePhysics(true);
 }
 
 // Called every frame

@@ -21,6 +21,18 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	
+	UFUNCTION()
+	void RespondToDamageTaken(const FDamageInfo& DamageInfo);
+	
+	UFUNCTION()
+	void RespondTDamageAvoided(const FDamageInfo& DamageInfo);
+	
+	UFUNCTION()
+	void RespondToHealRecieved(float HealAmount, AActor* Healer);
+	
+	UFUNCTION()
+	void RespondToDeath();
 
 public:
 	// Called every frame
@@ -37,5 +49,6 @@ public:
 	virtual bool TakeDamage_Implementation(const FDamageInfo& DamageInfo) override;
 	
 	// Damage System Component
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UDamageSystemComponent> DamageSystemComponent;
 };
