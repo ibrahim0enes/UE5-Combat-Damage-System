@@ -13,8 +13,8 @@
 // Sets default values
 ADamageableCharacterBase::ADamageableCharacterBase()
 {
-	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	// Nothing here needs per-frame updates; damage handling is event driven.
+	PrimaryActorTick.bCanEverTick = false;
 	
 	DamageSystemComponent = CreateDefaultSubobject<UDamageSystemComponent>(TEXT("DamageSystemComponent"));
 	
@@ -75,12 +75,6 @@ void ADamageableCharacterBase::RespondToDeath_Implementation()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	GetMesh()->SetSimulatePhysics(true);
-}
-
-// Called every frame
-void ADamageableCharacterBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 }
 
 // Called to bind functionality to input
