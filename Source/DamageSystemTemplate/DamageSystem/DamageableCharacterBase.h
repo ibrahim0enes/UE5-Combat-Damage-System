@@ -7,6 +7,8 @@
 #include "GameFramework/Character.h"
 #include "DamageableCharacterBase.generated.h"
 
+class UDamageSystemComponent;
+
 UCLASS()
 class DAMAGESYSTEMTEMPLATE_API ADamageableCharacterBase : public ACharacter, public IDamageableInterfaces
 {
@@ -32,4 +34,7 @@ public:
 	virtual float GetCurrentHealth_Implementation() override;
 	virtual bool GetIsDead_Implementation() override;
 	virtual  void Heal_Implementation(float HealAmount, AActor* Healer) override;
+	
+	// Damage System Component
+	TObjectPtr<UDamageSystemComponent> DamageSystemComponent;
 };
