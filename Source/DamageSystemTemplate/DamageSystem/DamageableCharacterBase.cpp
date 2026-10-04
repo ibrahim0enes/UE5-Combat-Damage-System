@@ -36,7 +36,7 @@ void ADamageableCharacterBase::BeginPlay()
 }
 
 void ADamageableCharacterBase::RespondToDamageTaken_Implementation(const FDamageInfo& DamageInfo)
-{
+{ 
 }
 
 void ADamageableCharacterBase::RespondToDamageAvoided_Implementation(const FDamageInfo& DamageInfo)
