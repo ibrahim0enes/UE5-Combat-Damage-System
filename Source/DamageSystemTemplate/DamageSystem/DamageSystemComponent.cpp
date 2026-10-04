@@ -20,8 +20,8 @@ void UDamageSystemComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
+	// MaxHealth may have been changed in Blueprint/editor; always start at full health.
+	CurrentHealth = MaxHealth;
 }
 
 bool UDamageSystemComponent::HandleIncomingDamage(const FDamageInfo& DamageInfo)
