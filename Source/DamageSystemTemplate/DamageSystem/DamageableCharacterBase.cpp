@@ -4,6 +4,10 @@
 #include "DamageableCharacterBase.h"
 #include "DamageSystemComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/PlayerController.h"
+#include "AIController.h"
+#include "BrainComponent.h"
 
 
 // Sets default values
@@ -45,6 +49,29 @@ void ADamageableCharacterBase::RespondToHealRecieved_Implementation(float HealAm
 
 void ADamageableCharacterBase::RespondToDeath_Implementation()
 {
+	// Stop all control: no movement, no player input, no AI behaviour.
+	if (UCharacterMovementComponent* MovementComponent = GetCharacterMovement())
+	{
+		MovementComponent->StopMovementImmediately();
+		MovementComponent->DisableMovement();
+	}
+	
+	if (AController* OwningController = GetController())
+	{
+		if (APlayerController* PlayerController = Cast<APlayerController>(OwningController))
+		{
+			DisableInput(PlayerController);
+		}
+		else if (AAIController* AIController = Cast<AAIController>(OwningController))
+		{
+			AIController->StopMovement();
+			if (AIController->GetBrainComponent())
+			{
+				AIController->GetBrainComponent()->StopLogic(TEXT("Dead"));
+			}
+		}
+	}
+	
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	GetMesh()->SetSimulatePhysics(true);
