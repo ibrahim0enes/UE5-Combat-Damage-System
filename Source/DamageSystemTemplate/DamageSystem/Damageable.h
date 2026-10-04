@@ -38,5 +38,5 @@ public:
 	void Heal(float HealAmount, AActor* Healer);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Damageable")
-	bool TakeDamage(const FDamageInfo& DamageInfo);
+	bool ReceiveDamage(const FDamageInfo& DamageInfo);
 };
