@@ -30,6 +30,7 @@ bool UDamageSystemComponent::HandleIncomingDamage(const FDamageInfo& DamageInfo)
 	
 	if ((IsInvincible && !DamageInfo.ShouldDamageInvincible) || (IsBlocking && DamageInfo.CanBeBlock))
 	{
+		OndDamageAvoided.Broadcast(DamageInfo);
 		return false;
 	}
 	
@@ -48,7 +49,13 @@ void UDamageSystemComponent::HandleIncomingHeal(float HealAmount, AActor* Healer
 	if (IsDead) { return; }
 	
 	CurrentHealth = FMath::Clamp(CurrentHealth + HealAmount, 0.f, MaxHealth);
+	OndHealReceived.Broadcast(HealAmount, Healer);
 	
-	
+}
+
+void UDamageSystemComponent::SetStartingHealth(float StartingHealth)
+{
+	MaxHealth = StartingHealth;
+	CurrentHealth = StartingHealth;
 }
 

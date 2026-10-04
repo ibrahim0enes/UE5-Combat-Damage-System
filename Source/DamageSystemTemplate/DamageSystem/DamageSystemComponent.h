@@ -8,6 +8,8 @@
 #include "DamageSystemComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDamageTaken, const FDamageInfo& , DamageInfo);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDamageAvoided, const FDamageInfo& , DamageInfo);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealReceived, float, HealAmount, AActor*, Healer);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
 struct FDamageInfo;
 
@@ -21,7 +23,7 @@ public:
 	UDamageSystemComponent();
 	
 	
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MaxHealth = 100.0f;
 	
 private:
@@ -74,10 +76,22 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "States")
 	void SetIsBlocking(bool NewBlocking) {IsBlocking = NewBlocking; }
 	
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	void SetStartingHealth(float StartingHealth);
+	
+	
 	// DELEGATES // 
 	UPROPERTY(BlueprintAssignable, Category = "Damage Delegates")
 	FOnDamageTaken OndDamageTaken;
 	
 	UPROPERTY(BlueprintAssignable, Category = "Damage Delegates")
+	FOnDamageAvoided OndDamageAvoided;
+	
+	UPROPERTY(BlueprintAssignable, Category = "Damage Delegates")
 	FOnDeath OndDeath;
+	
+	UPROPERTY(BlueprintAssignable, Category = "Damage Delegates")
+	FOnHealReceived OndHealReceived;
+	
+	
 };
