@@ -27,13 +27,13 @@ protected:
 	void RespondToDamageTaken(const FDamageInfo& DamageInfo);
 	
 	UFUNCTION(BlueprintNativeEvent)
-	void RespondTDamageAvoided(const FDamageInfo& DamageInfo);
+	void RespondToDamageAvoided(const FDamageInfo& DamageInfo);
 	
 	UFUNCTION(BlueprintNativeEvent)
 	void RespondToDamageParried(const FDamageInfo& DamageInfo);
 	
 	UFUNCTION(BlueprintNativeEvent)
-	void RespondToHealRecieved(float HealAmount, AActor* Healer);
+	void RespondToHealReceived(float HealAmount, AActor* Healer);
 	
 	UFUNCTION(BlueprintNativeEvent)
 	void RespondToDeath();

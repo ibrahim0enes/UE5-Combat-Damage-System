@@ -31,7 +31,7 @@ bool UDamageSystemComponent::HandleIncomingDamage(const FDamageInfo& DamageInfo)
 	
 	if (IsInvincible && !DamageInfo.ShouldDamageInvincible)
 	{
-		OndDamageAvoided.Broadcast(DamageInfo);
+		OnDamageAvoided.Broadcast(DamageInfo);
 		return false;
 	}
 	
@@ -42,9 +42,9 @@ bool UDamageSystemComponent::HandleIncomingDamage(const FDamageInfo& DamageInfo)
 		return false;
 	}
 	
-	if (IsBlocking && DamageInfo.CanBeBlock && IsInBlockArc(DamageInfo))
+	if (IsBlocking && DamageInfo.CanBeBlocked && IsInBlockArc(DamageInfo))
 	{
-		OndDamageAvoided.Broadcast(DamageInfo);
+		OnDamageAvoided.Broadcast(DamageInfo);
 		return false;
 	}
 	
@@ -52,7 +52,7 @@ bool UDamageSystemComponent::HandleIncomingDamage(const FDamageInfo& DamageInfo)
 	if (DamageInfo.DamageAmount > 0.0f && FinalDamage <= 0.0f)
 	{
 		// Fully absorbed by resistance/armor.
-		OndDamageAvoided.Broadcast(DamageInfo);
+		OnDamageAvoided.Broadcast(DamageInfo);
 		return false;
 	}
 	
@@ -61,11 +61,11 @@ bool UDamageSystemComponent::HandleIncomingDamage(const FDamageInfo& DamageInfo)
 	// Listeners receive the damage that was actually applied.
 	FDamageInfo AppliedDamage = DamageInfo;
 	AppliedDamage.DamageAmount = FinalDamage;
-	OndDamageTaken.Broadcast(AppliedDamage);
+	OnDamageTaken.Broadcast(AppliedDamage);
 	if (CurrentHealth <= 0.0f)
 	{
 		IsDead = true;
-		OndDeath.Broadcast();
+		OnDeath.Broadcast();
 	}
 	return true;
 }
@@ -106,7 +106,7 @@ void UDamageSystemComponent::HandleIncomingHeal(float HealAmount, AActor* Healer
 	if (IsDead) { return; }
 	
 	CurrentHealth = FMath::Clamp(CurrentHealth + HealAmount, 0.f, MaxHealth);
-	OndHealReceived.Broadcast(HealAmount, Healer);
+	OnHealReceived.Broadcast(HealAmount, Healer);
 	
 }
 
