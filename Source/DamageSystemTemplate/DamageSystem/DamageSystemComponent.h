@@ -24,7 +24,7 @@ public:
 	UDamageSystemComponent();
 	
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 	float MaxHealth = 100.0f;
 
 	// Flat damage reduction, applied to Physical damage after resistance.
@@ -43,10 +43,10 @@ public:
 private:
 	
 	// Synced with MaxHealth in BeginPlay, so changing MaxHealth in Blueprint/editor still starts at full health
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	float CurrentHealth = 0.0f;
 	
-	UPROPERTY()
+	UPROPERTY(ReplicatedUsing = OnRep_IsDead)
 	bool IsDead = false;
 	
 	UPROPERTY()
@@ -64,6 +64,31 @@ private:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
+	// Clients learn about death through replication of IsDead (reliable, also works for late joiners).
+	UFUNCTION()
+	void OnRep_IsDead();
+	
+	// Cosmetic events are broadcast on remote clients through these (the server broadcasts locally).
+	UFUNCTION(Server, Reliable)
+	void ServerSetIsBlocking(bool NewBlocking);
+	
+	UFUNCTION(Server, Reliable)
+	void ServerSetIsParrying(bool NewParrying);
+	
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastDamageTaken(const FDamageInfo& DamageInfo);
+	
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastDamageAvoided(const FDamageInfo& DamageInfo);
+	
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastDamageParried(const FDamageInfo& DamageInfo);
+	
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastHealReceived(float HealAmount, AActor* Healer);
 
 	
 public:
@@ -101,12 +126,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "States")
 	void SetIsInvincible(bool NewInvincible) {IsInvincible = NewInvincible; }
 	
+	// Blocking/parrying are set locally for responsiveness and forwarded to the server, which decides damage.
 	UFUNCTION(BlueprintCallable, Category = "States")
-	void SetIsBlocking(bool NewBlocking) {IsBlocking = NewBlocking; }
+	void SetIsBlocking(bool NewBlocking);
 	
 	// Open the parry window (e.g. from an AnimNotifyState); attacks with CanBeParried are then negated.
 	UFUNCTION(BlueprintCallable, Category = "States")
-	void SetIsParrying(bool NewParrying) {IsParrying = NewParrying; }
+	void SetIsParrying(bool NewParrying);
 	
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	void SetStartingHealth(float StartingHealth);

@@ -3,6 +3,7 @@
 
 #include "DamageSystemComponent.h"
 #include "GameFramework/Actor.h"
+#include "Net/UnrealNetwork.h"
 
 
 // Sets default values for this component's properties
@@ -10,6 +11,47 @@ UDamageSystemComponent::UDamageSystemComponent()
 {
 	// The component is purely event driven (damage/heal calls), so it never needs to tick.
 	PrimaryComponentTick.bCanEverTick = false;
+	
+	// Health and death state live on the server and are replicated to clients.
+	SetIsReplicatedByDefault(true);
+}
+
+void UDamageSystemComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	
+	DOREPLIFETIME(UDamageSystemComponent, MaxHealth);
+	DOREPLIFETIME(UDamageSystemComponent, CurrentHealth);
+	DOREPLIFETIME(UDamageSystemComponent, IsDead);
+}
+
+void UDamageSystemComponent::OnRep_IsDead()
+{
+	if (IsDead)
+	{
+		OnDeath.Broadcast();
+	}
+}
+
+void UDamageSystemComponent::MulticastDamageTaken_Implementation(const FDamageInfo& DamageInfo)
+{
+	// The server already broadcast this locally.
+	if (GetOwner() && !GetOwner()->HasAuthority()) { OnDamageTaken.Broadcast(DamageInfo); }
+}
+
+void UDamageSystemComponent::MulticastDamageAvoided_Implementation(const FDamageInfo& DamageInfo)
+{
+	if (GetOwner() && !GetOwner()->HasAuthority()) { OnDamageAvoided.Broadcast(DamageInfo); }
+}
+
+void UDamageSystemComponent::MulticastDamageParried_Implementation(const FDamageInfo& DamageInfo)
+{
+	if (GetOwner() && !GetOwner()->HasAuthority()) { OnDamageParried.Broadcast(DamageInfo); }
+}
+
+void UDamageSystemComponent::MulticastHealReceived_Implementation(float HealAmount, AActor* Healer)
+{
+	if (GetOwner() && !GetOwner()->HasAuthority()) { OnHealReceived.Broadcast(HealAmount, Healer); }
 }
 
 
@@ -19,16 +61,23 @@ void UDamageSystemComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// MaxHealth may have been changed in Blueprint/editor; always start at full health.
-	CurrentHealth = MaxHealth;
+	// Only the server sets it, clients receive the value through replication.
+	if (GetOwner() && GetOwner()->HasAuthority())
+	{
+		CurrentHealth = MaxHealth;
+	}
 }
 
 bool UDamageSystemComponent::HandleIncomingDamage(const FDamageInfo& DamageInfo)
 {
+	// Damage is server authoritative.
+	if (!GetOwner() || !GetOwner()->HasAuthority()) { return false; }
 	if (IsDead) { return false; }
 	
 	if (IsInvincible && !DamageInfo.ShouldDamageInvincible)
 	{
 		OnDamageAvoided.Broadcast(DamageInfo);
+		MulticastDamageAvoided(DamageInfo);
 		return false;
 	}
 	
@@ -36,12 +85,14 @@ bool UDamageSystemComponent::HandleIncomingDamage(const FDamageInfo& DamageInfo)
 	if (IsParrying && DamageInfo.CanBeParried && IsInBlockArc(DamageInfo))
 	{
 		OnDamageParried.Broadcast(DamageInfo);
+		MulticastDamageParried(DamageInfo);
 		return false;
 	}
 	
 	if (IsBlocking && DamageInfo.CanBeBlocked && IsInBlockArc(DamageInfo))
 	{
 		OnDamageAvoided.Broadcast(DamageInfo);
+		MulticastDamageAvoided(DamageInfo);
 		return false;
 	}
 	
@@ -50,6 +101,7 @@ bool UDamageSystemComponent::HandleIncomingDamage(const FDamageInfo& DamageInfo)
 	{
 		// Fully absorbed by resistance/armor.
 		OnDamageAvoided.Broadcast(DamageInfo);
+		MulticastDamageAvoided(DamageInfo);
 		return false;
 	}
 	
@@ -59,6 +111,7 @@ bool UDamageSystemComponent::HandleIncomingDamage(const FDamageInfo& DamageInfo)
 	FDamageInfo AppliedDamage = DamageInfo;
 	AppliedDamage.DamageAmount = FinalDamage;
 	OnDamageTaken.Broadcast(AppliedDamage);
+	MulticastDamageTaken(AppliedDamage);
 	if (CurrentHealth <= 0.0f)
 	{
 		IsDead = true;
@@ -100,15 +153,40 @@ float UDamageSystemComponent::CalculateFinalDamage(const FDamageInfo& DamageInfo
 
 void UDamageSystemComponent::HandleIncomingHeal(float HealAmount, AActor* Healer)
 {
+	if (!GetOwner() || !GetOwner()->HasAuthority()) { return; }
 	if (IsDead) { return; }
 	
 	CurrentHealth = FMath::Clamp(CurrentHealth + HealAmount, 0.f, MaxHealth);
 	OnHealReceived.Broadcast(HealAmount, Healer);
-	
+	MulticastHealReceived(HealAmount, Healer);
+}
+
+void UDamageSystemComponent::SetIsBlocking(bool NewBlocking)
+{
+	IsBlocking = NewBlocking;
+	if (GetOwner() && !GetOwner()->HasAuthority()) { ServerSetIsBlocking(NewBlocking); }
+}
+
+void UDamageSystemComponent::SetIsParrying(bool NewParrying)
+{
+	IsParrying = NewParrying;
+	if (GetOwner() && !GetOwner()->HasAuthority()) { ServerSetIsParrying(NewParrying); }
+}
+
+void UDamageSystemComponent::ServerSetIsBlocking_Implementation(bool NewBlocking)
+{
+	IsBlocking = NewBlocking;
+}
+
+void UDamageSystemComponent::ServerSetIsParrying_Implementation(bool NewParrying)
+{
+	IsParrying = NewParrying;
 }
 
 void UDamageSystemComponent::SetStartingHealth(float StartingHealth)
 {
+	if (!GetOwner() || !GetOwner()->HasAuthority()) { return; }
+	
 	MaxHealth = StartingHealth;
 	CurrentHealth = StartingHealth;
 }

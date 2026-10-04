@@ -35,6 +35,12 @@ void ADamageableCharacterBase::BeginPlay()
 		DamageSystemComponent->OnDamageParried.AddDynamic(this, &ADamageableCharacterBase::RespondToDamageParried);
 		DamageSystemComponent->OnHealReceived.AddDynamic(this, &ADamageableCharacterBase::RespondToHealReceived);
 		DamageSystemComponent->OnDeath.AddDynamic(this, &ADamageableCharacterBase::RespondToDeath);
+		
+		// A client can receive the replicated death state before BeginPlay (e.g. joining late); catch up here.
+		if (DamageSystemComponent->GetIsDead())
+		{
+			RespondToDeath();
+		}
 	}
 }
 
